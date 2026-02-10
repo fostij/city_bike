@@ -1,5 +1,6 @@
 import numpy as np
 
+#Euclidean distance
 def euclidean_distance(
     lat1: np.ndarray,
     lon1: np.ndarray,
