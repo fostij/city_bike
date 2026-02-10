@@ -3,7 +3,8 @@ __pycache__/
 .venv/
 *.py[codz]
 *$py.class
-output/figures/*.png
+output/
+data/*_cleaned.csv
 
 # C extensions
 *.so
