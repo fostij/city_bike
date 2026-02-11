@@ -56,10 +56,7 @@ source .venv/bin/activate   # Linux / macOS
 # 3. Install dependencies
 pip install -r requirements.txt
 
-# 4. Generate sample data (already included, or regenerate)
-python generate_data.py
-
-# 5. Run the pipeline
+# 4. Run the pipeline
 python main.py
 
 ```
