@@ -1,0 +1,3 @@
+Total Trips: 1495
+Total Distance: 11392.40 km
+Average Duration: 23.43 minutes
