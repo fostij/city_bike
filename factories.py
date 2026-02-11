@@ -37,16 +37,17 @@ class UserFactory:
         name = data.get("name", "Unknown")
         email = data.get("email", "unknown@example.com")
         if user_type == "casual":
-            return CasualUser(
+            return CasualUser (
                 user_id = user_id,
                 name = name,
                 email = email
                 day_pass_count = 0
             )
+        
         if user_type == "member":
             start = datetime.now()
             end = start.replace(year=start.year + 1)
-            return MemberUser(
+            return MemberUser (
                 user_id = user_id,
                 name = name,
                 email = email

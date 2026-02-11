@@ -23,5 +23,5 @@ def trip_statistics(values: np.ndarray) -> dict:
 #Outlier Detection(Z-score)
 def detect_outliers(values: np.ndarray, threshold: float = 3.0):
     """Detect outliers in an array of values using the Z-score method."""
-   z_scores = (values - np.mean(values)) / np.std(values)
-   return np.abs(z_scores) > threshold
+    z_scores = (values - np.mean(values)) / np.std(values)
+    return np.abs(z_scores) > threshold

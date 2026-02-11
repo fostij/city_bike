@@ -1,6 +1,6 @@
 from analyzer import BikeShareSystem
 from visualization import (
-    plot_tips_per_station,
+    plot_trips_per_station,
     plot_monthly_trend,
     plot_duration_histogram,
     plot_duration_by_user_type,
@@ -8,7 +8,7 @@ from visualization import (
 
 def main() -> None:
     # Load and analyze data
-    system = BikeShareSystem("data/bikeshare_data.csv")
+    system = BikeShareSystem("data/trips.csv")
     system.load_data()
     system.inspect_data()
     system.clean_trips()

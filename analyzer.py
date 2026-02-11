@@ -1,14 +1,14 @@
 import pandas as pd
-import numpy as np
 
 class BikeShareSystem():
-    def __init__(self):
+    def __init__(self, data_path: str):
+        self.data_path = data_path
         self.trips_df = None
         self.stations_df = None
         self.maintenance_df = None
 
     def load_data(self) -> None:
-        self.trips_df = pd.read_csv('data/trips.csv')
+        self.trips_df = pd.read_csv('data/trips.csv', parse_dates=['start_time', 'end_time'])
         self.stations_df = pd.read_csv('data/stations.csv')
         self.maintenance_df = pd.read_csv('data/maintenance.csv')
 
@@ -17,27 +17,9 @@ class BikeShareSystem():
         print(self.trips_df.isnull().sum())
        
     def clean_trips(self) -> None:
-        self.trips_df.dropna(inplace=True)
-        self.trips_df["start_time"] = pd.to_datetime(self.trips_df["start_time"])
-        self.trips_df["end_time"] = pd.to_datetime(self.trips_df["end_time"])
-        self.trips_df = self.trips_df[
-            self.trips_df["end_time"] > self.trips_df["start_time"]
-        ]
-
-        self.trips_df["duration_minutes"] = pd.to_numeric(
-            self.trips.df["duration_minutes"], errors='coerce'
-        )
-        self.tips_df["distance_km"] = pd.to_numeric(
-            self.trips_df["distance_km"], errors='coerce'
-        )
-        self.trips_df["duration_minutes"].fillna(
-            self.trips_df["duration_minutes"].median(),
-            inplace=True
-        )
-        self.trips_df["distance_km"].fillna(
-            self.trips_df["distance_km"].median(),
-            inplace=True
-        )
+        self.trips_df = self.trips_df[self.trips_df["end_time"] > self.trips_df["start_time"]]
+        self.trips_df["duration_minutes"].fillna(self.trips_df["duration_minutes"].median(), inplace=True)
+        self.trips_df["distance_km"].fillna(self.trips_df["distance_km"].median(), inplace=True)
         self.trips_df["status"].fillna("completed", inplace=True)
         self.trips_df.drop_duplicates(inplace=True)
         self.trips_df.to_csv("data/trips_clean.csv", index=False)
@@ -58,7 +40,7 @@ class BikeShareSystem():
 
     def top_start_stations(self) -> pd.DataFrame:
         result = (
-            self.trips.df
+            self.trips_df
             .groupby("start_station_id")
             .size()
             .sort_values(ascending=False)
