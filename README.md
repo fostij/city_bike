@@ -12,15 +12,30 @@ numerical computing, visualization, and professional Git workflow.
 - matplotlib
 
 ## Project Structure
-See the `/citybike` directory for modular code organization:
-- models.py — domain models (OOP, inheritance)
-- factories.py — Factory Pattern
-- pricing.py — Strategy Pattern
-- analyzer.py — business analytics
-- algorithms.py — sorting & searching algorithms
-- numerical.py — NumPy computations
-- visualization.py — charts and plots
-- main.py — application entry point
+citybike/
+├── data/
+│   ├── trips.csv        # Raw trip data
+│   ├── stations.csv     # Station metadata
+│   └── maintenance.csv  # Maintenance records
+├── output/
+│   ├── summary_report.txt
+│   ├── top_stations.csv
+│   ├── top_users.csv
+│   └── figures/         # Exported PNG charts
+|       |__trips_per_station.png
+|
+├── main.py              # Entry point — runs the full pipeline
+├── models.py            # OOP domain classes (Entity, Bike, Station, …)
+├── analyzer.py          # BikeShareSystem — data loading, cleaning, analytics
+├── algorithms.py        # Custom sorting & searching + benchmarks
+├── numerical.py         # NumPy computations (distances, stats, outliers)
+├── visualization.py     # Matplotlib chart functions
+├── pricing.py           # Strategy Pattern — pricing strategies
+├── factories.py         # Factory Pattern — object creation from dicts
+├── utils.py             # Validation & formatting helpers
+├── generate_data.py     # Synthetic data generator (run once)
+├── requirements.txt     # Python dependencies
+|-- README.md            # Project description
 
 ## Setup
 ```bash
