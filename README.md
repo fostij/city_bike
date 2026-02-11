@@ -5,15 +5,17 @@ CityBike is a backend analytics platform for a fictional bike-sharing service.
 The project demonstrates object-oriented design, data analysis, algorithms,
 numerical computing, visualization, and professional Git workflow.
 
-## Tech Stack
+## Dependencies
 - Python 3.10+
 - pandas
 - numpy
 - matplotlib
 
 ## Project Structure
+
+```
 citybike/
-├── data/
+|── data/
 │   ├── trips.csv        # Raw trip data
 │   ├── stations.csv     # Station metadata
 │   └── maintenance.csv  # Maintenance records
@@ -37,11 +39,30 @@ citybike/
 ├── requirements.txt     # Python dependencies
 |-- README.md            # Project description
 
+```
+
 ## Setup
+
 ```bash
+# 1. Clone the repository
+git clone <repo-url>
+cd city_bike
+
+# 2. Create a virtual environment (recommended)
+python -m venv .venv
+source .venv/bin/activate   # Linux / macOS
+# .venv\Scripts\activate    # Windows
+
+# 3. Install dependencies
 pip install -r requirements.txt
+
+# 4. Generate sample data (already included, or regenerate)
+python generate_data.py
+
+# 5. Run the pipeline
 python main.py
 
+```
 
 ## Features
 - Object-oriented domain modeling
