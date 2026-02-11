@@ -1,67 +1,86 @@
 """
 models.py
 
-Domain models for the CityBike project.
+Domain-Modelle für das City Bike Sharing System.
 
-This module contains ONLY object-oriented domain models.
-No data loading, no pandas, no analytics.
+Dieses Modul enthält alle Kern-Entitäten des Systems, basierend auf OOP-Prinzipien:
 
-All requirements from the project specification are strictly followed.
+- Entity: Abstrakte Basisklasse
+- Bike, Station, User: Konkrete Domänenobjekte
+- Trip, MaintenanceRecord: Zusätzliche Geschäftsobjekte
+
+Prinzipien:
+- Abstraktion
+- Vererbung
+- Kapselung (@property)
+- Einheitliche String-Darstellung (__str__, __repr__)
 """
 
 
 from abc import ABC, abstractmethod
 from datetime import datetime
-from typing import Optional
 
 
 
 class Entity(ABC):
     """
-    Abstract base class for all domain entities.
+    Abstrakte Basisklasse für alle Entitäten.
 
-    Required by the project:
-    - id (read-only property)
-    - created_at (read-only property)
-    - abstract __str__ and __repr__ methods
-    """
+    Jede Entität besitzt:
+    - eine eindeutige ID
+    - ein Erstellungsdatum
 
-    def __init__(self, id: str, created_at: Optional[datetime] = None) -> None:
+    Unterklassen müssen __str__ und __repr__ implementieren.
+    """  
+
+    def __init__(self, id: str, created_at: datetime) -> None:
+        """
+        Initialisiert eine neue Entität.
+
+        :param entity_id: Eindeutige ID
+        """
         if not id:
             raise ValueError("Entity ID must be a non-empty string.")
-        self._id = id
-        self._created_at = created_at or datetime.now()
+        self._id = id # private ID zur Sicherstellung der Kapselung
+        self._created_at = datetime() # Zeitpunkt der Erstellung
 
     @property
     def id(self) -> str:
-        """Return the unique identifier (read-only)."""
+        """Gibt die eindeutige ID zurück."""
         return self._id
 
     @property
     def created_at(self) -> datetime:
-        """Return the creation timestamp (read-only)."""
+        """Gibt das Erstellungsdatum zurück."""
         return self._created_at  
 
     @abstractmethod
     def __str__(self) -> str:
-        """Return a user-friendly string representation of the entity."""
+        """Muss von jeder Unterklasse implementiert werden."""
         pass
 
     @abstractmethod
     def __repr__(self) -> str:
-        """Return an unambiguous string representation of the entity for debugging."""
+        """Muss von jeder Unterklasse implementiert werden."""
         pass
         
 
 
 class Bike(Entity):
     """
-    Represents a bike in the system.
+    Repräsentiert ein Fahrrad im System.
     """
 
     VALID_STATUSES = {"available", "in_use", "maintenance"}
 
     def __init__(self, bike_id: str, bike_type: str, status: str):
+        """
+        Initialisiert ein neues Bike.
+
+        :param bike_id: Eindeutige ID
+        :param bike_type: Typ des Fahrrads (z.B. Standard)
+        :param status: Status (z.B. 'available', 'in_use')
+        """
         super().__init__(bike_id)
         if status not in self.VALID_STATUSES:
             raise ValueError(f"Invalid bike status: {status}")
@@ -69,9 +88,11 @@ class Bike(Entity):
         self.status = status
 
     def __str__(self) -> str:
+        """Benutzerfreundliche Darstellung des Bikes."""
         return f"Bike {self.id} ({self.bike_type}, {self.status})"
     
     def __repr__(self):
+        """Technische Darstellung des Bikes."""
         return (
             f"Bike(id={self.id!r}, "
             f"type={self.bike_type!r}, "
@@ -87,9 +108,15 @@ class ClassicBike(Bike):
         self.gear_count = gear_count
 
     def __str__(self) -> str:
+        """
+        Benutzerfreundliche Darstellung des Fahrrads.
+        """
         return f"ClassicBike {self.id} ({self.gear_count} gears)"
     
     def __repr__(self):
+        """
+        Technische Repräsentation des Fahrrads.
+        """
         return (
             f"ClassicBike(id={self.id!r}, "
             f"gears={self.gear_count!r})"
@@ -117,7 +144,17 @@ class ElectricBike(Bike):
         )
 
 class Station(Entity):
+    """
+    Repräsentiert eine Bike-Station.
+    """
     def __init__(self, station_id: str, name: str, capacity: int, latitude: float, longitude: float):
+        """
+        Initialisiert eine neue Station.
+
+        :param station_id: Eindeutige ID
+        :param name: Name der Station
+        :param capacity: Maximale Kapazität
+        """
         super().__init__(station_id)
         if capacity <= 0:
             raise ValueError("Capacity must be a positive.")
@@ -128,9 +165,11 @@ class Station(Entity):
         
 
     def __str__(self) -> str:
+        """Benutzerfreundliche Darstellung der Station."""
         return f"Station {self.name} (capacity {self.capacity})"
     
     def __repr__(self) -> str:
+        """Technische Darstellung der Station."""
         return (
             f"Station(id={self.id!r}, "
             f"name={self.name!r}, "
@@ -139,7 +178,16 @@ class Station(Entity):
     
 
 class User(Entity):
+    """
+    Repräsentiert einen Benutzer des Systems.
+    """
     def __init__(self, user_id: str, name: str, email: str, user_type: str):
+        """
+        Initialisiert einen Benutzer.
+
+        :param user_id: Eindeutige ID
+        :param user_type: Typ des Benutzers (z.B. 'customer', 'admin')
+        """
         super().__init__(user_id)
         if "@" not in email:
             raise ValueError("Invalid email address.")
@@ -148,9 +196,11 @@ class User(Entity):
         self.user_type = user_type
 
     def __str__(self) -> str:
+        """Benutzerfreundliche Darstellung des Benutzers."""
         return f"User {self.name} ({self.user_type})"
     
     def __repr__(self) -> str:
+        """Technische Darstellung des Benutzers."""
         return (
             f"User(id={self.id!r}, "
             f"name={self.name!r}, "
@@ -184,6 +234,9 @@ class MemberUser(User):
         self.tier = tier
 
 class Trip:
+    """
+    Repräsentiert eine einzelne Fahrt.
+    """
     def __init__(
             self,
             trip_id: str,
@@ -195,6 +248,18 @@ class Trip:
             end_time: datetime,
             distance_km: float,
     ):
+        """
+        Initialisiert eine Fahrt.
+
+        :param trip_id: Eindeutige ID
+        :param bike_id: ID des Fahrrads
+        :param user_id: ID des Benutzers
+        :param start_station_id: Startstation
+        :param end_station_id: Endstation
+        :param start_time: Startzeit
+        :param end_time: Endzeit
+        :param distance_km: Fahrdistanz
+        """
         if end_time <= start_time:
             raise ValueError("End time must be after start time.")
         self.trip_id = trip_id
@@ -208,10 +273,27 @@ class Trip:
 
     @property
     def duration_minutes(self) -> float:
+        """Berechnet die Fahrtdauer in Minuten."""
         return (self.end_time - self.start_time).total_seconds() / 60
+    
+    def __str__(self) -> str:
+        """Benutzerfreundliche Darstellung der Fahrt."""
+        return f"Trip {self.trip_id} ({self.duration_minutes:.1f} min)"
+
+    def __repr__(self) -> str:
+        """Technische Darstellung der Fahrt."""
+        return (
+            f"Trip(id='{self.trip_id}', "
+            f"bike='{self.bike_id}', "
+            f"user='{self.user_id}', "
+            f"duration={self.duration_minutes:.1f})"
+        )
     
 
 class MaintenanceRecord:
+    """
+    Repräsentiert einen Wartungseintrag für ein Fahrrad.
+    """
     def __init__(
             self,
             record_id: str,
@@ -219,9 +301,17 @@ class MaintenanceRecord:
             date: datetime,
             maintenance_type: str,
             cost: float,
-            description: Optional[str] = None,
+            description: str,
             
     ):
+        """
+        Initialisiert einen Wartungseintrag.
+
+        :param record_id: Eindeutige ID
+        :param bike_id: ID des Fahrrads
+        :param date: Datum der Wartung
+        :param cost: Kosten
+        """
         if cost < 0:
             raise ValueError("Cost cannot be negative.")
         self.record_id = record_id
@@ -230,3 +320,16 @@ class MaintenanceRecord:
         self.maintenance_type = maintenance_type
         self.cost = cost
         self.description = description
+
+    def __str__(self) -> str:
+        """Benutzerfreundliche Darstellung des Wartungseintrags."""
+        return f"Maintenance {self.record_id} (bike={self.bike_id})"
+
+    def __repr__(self) -> str:
+        """Technische Darstellung des Wartungseintrags."""
+        return (
+            f"MaintenanceRecord(id='{self.record_id}', "
+            f"bike='{self.bike_id}', "
+            f"cost={self.cost}, "
+            f"date='{self.date}')"
+        )
